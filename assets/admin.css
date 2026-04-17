@@ -1,0 +1,21 @@
+.jetwp-agent .jetwp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.jetwp-agent .jetwp-card {
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 6px;
+    padding: 16px 18px;
+}
+
+.jetwp-agent .jetwp-card h2 {
+    margin-top: 0;
+}
+
+.jetwp-agent .jetwp-actions {
+    margin-top: 16px;
+}
