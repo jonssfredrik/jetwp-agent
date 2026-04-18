@@ -41,6 +41,8 @@ final class JetWP_Telemetry
         wp_update_themes();
         wp_version_check();
 
+        $coreUpdate = self::core_update();
+
         $payload = [
             'site_id' => (string) get_option('jetwp_site_id', ''),
             'timestamp' => gmdate('c'),
@@ -52,7 +54,11 @@ final class JetWP_Telemetry
             'active_theme' => self::active_theme(),
             'plugins' => self::plugins(),
             'themes' => self::themes(),
-            'core_update' => self::core_update(),
+            'core' => [
+                'current_version' => get_bloginfo('version'),
+                'available_update' => $coreUpdate,
+            ],
+            'core_update' => $coreUpdate,
             'disk_usage_mb' => self::disk_usage_mb(),
             'db_size_mb' => self::db_size_mb(),
             'cron_jobs' => self::cron_jobs(),
@@ -98,6 +104,14 @@ final class JetWP_Telemetry
             ];
         }
 
+        usort($items, static function (array $left, array $right): int {
+            if ((bool) ($left['active'] ?? false) !== (bool) ($right['active'] ?? false)) {
+                return (bool) ($left['active'] ?? false) ? -1 : 1;
+            }
+
+            return strcasecmp((string) ($left['name'] ?? ''), (string) ($right['name'] ?? ''));
+        });
+
         return $items;
     }
 
@@ -115,6 +129,14 @@ final class JetWP_Telemetry
                 'update_available' => isset($updates[$stylesheet]) ? ($updates[$stylesheet]->update['new_version'] ?? null) : null,
             ];
         }
+
+        usort($items, static function (array $left, array $right): int {
+            if ((bool) ($left['active'] ?? false) !== (bool) ($right['active'] ?? false)) {
+                return (bool) ($left['active'] ?? false) ? -1 : 1;
+            }
+
+            return strcasecmp((string) ($left['name'] ?? ''), (string) ($right['name'] ?? ''));
+        });
 
         return $items;
     }

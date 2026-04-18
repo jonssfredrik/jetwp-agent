@@ -24,14 +24,23 @@ require_once JETWP_AGENT_DIR . 'includes/class-jetwp-auth.php';
 require_once JETWP_AGENT_DIR . 'includes/class-jetwp-telemetry.php';
 require_once JETWP_AGENT_DIR . 'includes/class-jetwp-registration.php';
 require_once JETWP_AGENT_DIR . 'includes/class-jetwp-heartbeat.php';
+require_once JETWP_AGENT_DIR . 'includes/class-jetwp-job-runner.php';
+require_once JETWP_AGENT_DIR . 'includes/class-jetwp-job-poller.php';
 require_once JETWP_AGENT_DIR . 'includes/class-jetwp-rest.php';
 require_once JETWP_AGENT_DIR . 'admin/class-jetwp-admin-page.php';
 
-register_activation_hook(__FILE__, ['JetWP_Heartbeat', 'activate']);
-register_deactivation_hook(__FILE__, ['JetWP_Heartbeat', 'deactivate']);
+register_activation_hook(__FILE__, static function (): void {
+    JetWP_Heartbeat::activate();
+    JetWP_Job_Poller::activate();
+});
+register_deactivation_hook(__FILE__, static function (): void {
+    JetWP_Heartbeat::deactivate();
+    JetWP_Job_Poller::deactivate();
+});
 
 add_action('plugins_loaded', static function (): void {
     JetWP_Heartbeat::init();
+    JetWP_Job_Poller::init();
     JetWP_Rest::init();
 
     if (is_admin()) {

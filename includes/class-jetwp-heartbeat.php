@@ -14,6 +14,7 @@ final class JetWP_Heartbeat
     {
         add_filter('cron_schedules', [self::class, 'cron_schedules']);
         add_action(self::HOOK, [self::class, 'send']);
+        self::schedule();
     }
 
     public static function activate(): void
